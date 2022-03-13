@@ -1,0 +1,80 @@
+# load packages and data etc.
+
+# PCA
+K = 310 # Number of principal components
+pca_opt = PCA(n_components = K)
+pca_opt.fit(X_train) #  Calculate the PCs and eigenvalues of the data matrix X
+X_pca = pca_opt.transform(X_train) # Projections on the PCs
+
+# split data
+X_train_new_pca, X_test_new_pca, y_train_new_pca, y_test_new_pca = train_test_split(X_pca, y_train, test_size = 0.33, random_state = 1)
+
+# KNN with PCA
+knn_pca_accuracy = []
+knn_pca_accuracy_time = []
+
+knn_pca_roc = []
+knn_pca_roc_time = []
+
+# consider different k
+for n in range(1, 30, 1):
+    knn_pca_clf = KNeighborsClassifier(n_neighbors = n)
+    
+    # accuracy
+    result = cross_validate(knn_pca_clf, X_train_new_pca, y_train_new_pca, scoring = 'accuracy', cv = 5)
+    knn_pca_accuracy.append(np.mean(result['test_score']))
+    knn_pca_accuracy_time.append(np.mean(result['fit_time']))
+    
+    # roc auc
+    result = cross_validate(knn_pca_clf, X_train_new_pca, y_train_new_pca, scoring = 'roc_auc', cv = 5)
+    knn_pca_roc.append(np.mean(result['test_score']))
+    knn_pca_roc_time.append(np.mean(result['fit_time']))
+    
+ np.array(knn_pca_accuracy).argmax()
+ knn_pca_accuracy[3]
+    
+ plot_graph(knn_pca_accuracy, knn_pca_accuracy_time, knn_pca_roc, knn_pca_roc_time,
+          range(1, 30, 1), 'number of neighbors')
+ 
+# final model for knn with PCA
+knn_pca_final = KNeighborsClassifier(n_neighbors = 3)
+knn_pca_final.fit(X_train_new_pca, y_train_new_pca)
+knn_pca_final_pred = knn_pca_final.predict(X_test_new_pca)
+print(accuracy_score(y_test_new_pca, knn_pca_final_pred))
+print(roc_auc_score(y_test_new_pca, knn_pca_final_pred))
+
+# AdaBoost with PCA
+ada_pca_discrete_accuracy = []
+ada_pca_discrete_accuracy_time = []
+
+ada_pca_discrete_roc = []
+ada_pca_discrete_roc_time = []
+
+# consider different n_estimators values
+for i in range(30, 401, 10):
+    ada_pca_discrete_clf = AdaBoostClassifier(n_estimators = i, random_state = 1, algorithm = 'SAMME')
+    
+    # accuracy
+    result = cross_validate(ada_pca_discrete_clf, X_train_new_pca, y_train_new_pca, scoring = 'accuracy', cv=5)
+    ada_pca_discrete_accuracy.append(np.mean(result['test_score']))
+    ada_pca_discrete_accuracy_time.append(np.mean(result['fit_time']))
+    
+    # roc_auc
+    result = cross_validate(ada_pca_discrete_clf, X_train_new_pca, y_train_new_pca, scoring = 'roc_auc', cv=5)
+    ada_pca_discrete_roc.append(np.mean(result['test_score']))
+    ada_pca_discrete_roc_time.append(np.mean(result['fit_time']))
+
+plot_graph(ada_pca_discrete_accuracy, ada_pca_discrete_accuracy_time, ada_pca_discrete_roc, ada_pca_discrete_roc_time,
+          range(30, 401, 10), 'n_estimators')
+
+ada_pca_discrete_max = pd.DataFrame({'T': range(30, 401, 10), 
+              'accuracy': ada_pca_discrete_accuracy})
+ada_pca_discrete_max.sort_values(by = "accuracy", ascending = False).head(5)
+
+# final model for AdaBoost(discrete)
+ada_pca_discrete_final = AdaBoostClassifier(n_estimators = 310, algorithm = 'SAMME')
+ada_pca_discrete_final.fit(X_train_new_pca, y_train_new_pca)
+ada_pca_discrete_final_pred = ada_pca_discrete_final.predict(X_test_new_pca)
+print(accuracy_score(y_test_new_pca, ada_pca_discrete_final_pred))
+print(roc_auc_score(y_test_new_pca, ada_pca_discrete_final_pred))
+
