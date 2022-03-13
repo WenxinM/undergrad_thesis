@@ -9,6 +9,7 @@ X_pca = pca_opt.transform(X_train) # Projections on the PCs
 # split data
 X_train_new_pca, X_test_new_pca, y_train_new_pca, y_test_new_pca = train_test_split(X_pca, y_train, test_size = 0.33, random_state = 1)
 
+###############################
 # KNN with PCA
 knn_pca_accuracy = []
 knn_pca_accuracy_time = []
@@ -43,6 +44,7 @@ knn_pca_final_pred = knn_pca_final.predict(X_test_new_pca)
 print(accuracy_score(y_test_new_pca, knn_pca_final_pred))
 print(roc_auc_score(y_test_new_pca, knn_pca_final_pred))
 
+####################################
 # AdaBoost with PCA
 ada_pca_discrete_accuracy = []
 ada_pca_discrete_accuracy_time = []
