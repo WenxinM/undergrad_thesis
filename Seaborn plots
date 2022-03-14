@@ -34,11 +34,8 @@ g.text(-300, 50, "50", color = 'r', fontsize = 15)
 
 ##################################
 # PCA plots
-K = 310
-pca = PCA(n_components = K)
-pca.fit(X_train)
 pca_ratio_sum = pd.Series(np.cumsum(pca.explained_variance_ratio_))
-
+V = pd.DataFrame(data = pca_opt.components_.T, index = X_train.columns)
 
 f, ax = plt.subplots(figsize=(16, 6.5))
 f.tight_layout()
