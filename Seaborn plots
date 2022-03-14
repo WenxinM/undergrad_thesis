@@ -11,6 +11,25 @@ sns.set_theme(style="darkgrid")
 ################################
 # Data exploration: max occurrence of words
 
+plt.figure(figsize=(14, 8))
+plt.yticks(fontsize=15)
+
+g = sns.lineplot(feature_max.index, feature_max.values)
+g.grid(axis = 'x')
+g.text(11000 + 10, 471 + 10, "the: 471", color = 'r', fontsize = 15)
+g.text(11126 + 10, 262 + 10, "to: 262", color = 'r', fontsize = 15)
+g.text(7629 + 10 , 212 + 10, "of: 212", color = 'r', fontsize = 15)
+g.text(810 + 10, 210 + 10, "and: 210", color = 'r', fontsize = 15)
+
+g.set(xticklabels = [])
+g.set_title("Maximum occurrence of each word", fontsize = 20, loc = "center")
+g.set_xlabel("Words", fontsize = 15)
+g.set_ylabel("Maximum occurrence", fontsize = 15)
+
+g.axhline(y = 10, color = 'r', linestyle='--')
+g.text(-300, 10, "10", color = 'r', fontsize = 15)
+g.axhline(y = 50, color = 'r', linestyle='--')
+g.text(-300, 50, "50", color = 'r', fontsize = 15)
 
 
 ##################################
