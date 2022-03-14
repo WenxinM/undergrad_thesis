@@ -1,0 +1,147 @@
+#################################
+# Add packages (replace first block with the pacakges here)
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.pyplot import MultipleLocator
+import matplotlib.ticker as ticker
+import seaborn as sns
+sns.set_theme(style="darkgrid")
+
+################################
+# Data exploration: max occurrence of words
+
+
+
+##################################
+# PCA plots
+K = 310
+pca = PCA(n_components = K)
+pca.fit(X_train)
+V = pd.DataFrame(data = pca.components_.T, index = X_train.columns)
+
+
+f, ax = plt.subplots(figsize=(16, 6.5))
+f.tight_layout()
+plt.subplots_adjust(wspace = 0.3, hspace = 0.6)
+
+plt.subplot(2,1,1)
+g = sns.lineplot(pca_ratio_sum.index, pca_ratio_sum.values)
+g.set_xticklabels(g.get_xticklabels(), rotation=45)
+g.xaxis.set_major_locator(ticker.MultipleLocator(25))
+g.xaxis.set_major_formatter(ticker.ScalarFormatter())
+g.set_title("Number of components needed to explain variance", 
+            fontsize = 20, loc = "center")
+g.set_xlabel("Number of components", fontsize = 15)
+g.set_ylabel("cumulative explained variance", fontsize = 15)
+g.axhline(y = 0.95, color = 'r', linestyle='-')
+g.axvline(x = 310, ymax = 1, color = 'r', linestyle = "--")
+g.text(315, 0.9, "n = 310", fontsize = 15)
+g.text(10, 0.96, "95%", fontsize = 15)
+plt.xlim(-5, 1000)
+plt.ylim(0.60, None)
+
+plt.subplot(2,2,3)
+g = sns.barplot(V[0].sort_values(ascending = False).head(5).values,
+               V[0].sort_values(ascending = False).head(5).index)
+g.set_title("Top 5 words with the largest magitude in the first PC",
+      fontsize = 20, loc = "center")
+g.set_xlabel("Manitude of words",  fontsize = 15)
+g.set_ylabel("Variable names",  fontsize = 15)
+g.set_yticklabels(g.get_yticklabels(), fontsize = 15)
+
+plt.subplot(2,2,4)
+g = sns.barplot(V[1].sort_values(ascending = False).head(5).values,
+               V[1].sort_values(ascending = False).head(5).index)
+g.set_title("Top 5 words with the largest magitude in the second PC",
+      fontsize = 20, loc = "center")
+g.set_xlabel("Manitude of words",  fontsize = 15)
+g.set_ylabel("Variable names",  fontsize = 15)
+g.set_yticklabels(g.get_yticklabels(), fontsize = 15)
+
+###############################
+# Decision tree: importance feature
+# !!! set ``ascending = False`` in the last line before plotting
+
+# get importance and index for first ten words
+dt_importances = dt_final.feature_importances_
+dt_ind = np.argpartition(dt_importances, -10)[-10:]
+
+# construct importance dataframe
+dt_importance_df = pd.DataFrame(dt_importances[dt_ind])
+dt_importance_df.set_axis(np.array(list(X_train_new))[dt_ind], axis = 0, inplace = True)
+dt_importance_df.columns = ["importances"]
+dt_importance_df = dt_importance_df.sort_values(by = ['importances'], ascending = False)
+
+# plot: 
+# !!! NEED TO DECIDE which words are important after re-running the codes and change the corlor pattern ``clrs`` accordingly
+clrs = ['#d62728' if (x in ["image", "hillary", "michelle"]) else '#1f77b4' for x in dt_importance_df.index]
+
+plt.figure(figsize = [12, 6.5])
+g = sns.barplot(dt_importance_df.importances,
+                dt_importance_df.index, 
+                palette = clrs)
+g.set_title("Decision Tree Feature importances", 
+            fontsize = 20, loc = "center")
+g.set_xlabel("Decrease in Gini impurity", fontsize = 15)
+g.set_ylabel("Variable names", fontsize = 15)
+g.set_yticklabels(g.get_yticklabels(), fontsize = 15)
+g.text(0.65, 1, "0.67", fontsize = 17)
+plt.show()
+
+###########################
+# Random forest (full-depth)
+# Run permutations here ... (not included here)
+
+# !!! Again, set ``ascending = False``
+# construct importance dataframe
+clf_importance_df = pd.DataFrame(clf_importances[clf_ind])
+clf_importance_df.set_axis(np.array(list(X_train_new))[clf_ind], axis = 0, inplace = True)
+clf_importance_df.columns = ['importances']
+clf_importance_df = clf_importance_df.sort_values(by = ['importances'], ascending = False)
+
+# plot
+# !!! CHANGE the strings of interest here after re-running the codes
+clrs = ['#d62728' if (x in ["image", "hillary", "michelle"]) else '#1f77b4' for x in clf_importance_df.index]
+
+plt.figure(figsize = [12, 6.5])
+g = sns.barplot(clf_importance_df.importances,
+                clf_importance_df.index, 
+                palette = clrs)
+g.set_title("Random Forest(full depth) feature importances", 
+            fontsize = 20, loc = "center")
+g.set_xlabel("Decrease in Gini impurity", fontsize = 15)
+g.set_ylabel("Variable names", fontsize = 15)
+g.set_yticklabels(g.get_yticklabels(), fontsize = 15)
+
+# !!! text annotation depending on the results
+# g.text(0.65, 1, "0.67", fontsize = 17)
+plt.show()
+
+####################################
+# Random forest (tune max depth)
+# !!! Similar to above, after the permutations, set ``ascending = False``
+
+# construct importance dataframe
+rf_importance_df = pd.DataFrame(rf_importances[rf_ind])
+rf_importance_df.set_axis(np.array(list(X_train_new))[rf_ind], axis = 0, inplace = True)
+rf_importance_df.columns = ['importances']
+rf_importance_df = rf_importance_df.sort_values(by = ['importances'], ascending = False)
+
+# plot
+# !!! CHANGE the strings of interest here after re-running the codes
+clrs = ['#d62728' if (x in ["image", "hillary", "michelle"]) else '#1f77b4' for x in rf_importance_df.index]
+
+plt.figure(figsize = [12, 6.5])
+g = sns.barplot(rf_importance_df.importances,
+                rf_importance_df.index, 
+                palette = clrs)
+g.set_title("Random Forest Feature Importances", 
+            fontsize = 20, loc = "center")
+g.set_xlabel("Decrease in Gini impurity", fontsize = 15)
+g.set_ylabel("Variable names", fontsize = 15)
+g.set_yticklabels(g.get_yticklabels(), fontsize = 15)
+
+# !!! text annotation depending on the results
+# g.text(0.65, 1, "0.67", fontsize = 17)
+plt.show()
