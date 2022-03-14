@@ -37,7 +37,7 @@ g.text(-300, 50, "50", color = 'r', fontsize = 15)
 K = 310
 pca = PCA(n_components = K)
 pca.fit(X_train)
-V = pd.DataFrame(data = pca.components_.T, index = X_train.columns)
+pca_ratio_sum = pd.Series(np.cumsum(pca.explained_variance_ratio_))
 
 
 f, ax = plt.subplots(figsize=(16, 6.5))
