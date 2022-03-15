@@ -2,6 +2,9 @@
 # Changes:
 # !!!! Max features
 
+TITLE = 40
+LABEL = 30
+TICK =20
 
 
 #################################
