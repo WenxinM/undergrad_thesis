@@ -1,3 +1,9 @@
+##################################
+# Changes:
+# !!!! Max features
+
+
+
 #################################
 # Add packages (replace first block with the pacakges here)
 import pandas as pd
@@ -27,9 +33,9 @@ g.set_xlabel("Words", fontsize = 15)
 g.set_ylabel("Maximum occurrence", fontsize = 15)
 
 g.axhline(y = 10, color = 'r', linestyle='--')
-g.text(-300, 10, "10", color = 'r', fontsize = 15)
+g.text(-400, 12, "10", color = 'r', fontsize = 15)
 g.axhline(y = 50, color = 'r', linestyle='--')
-g.text(-300, 50, "50", color = 'r', fontsize = 15)
+g.text(-400, 52, "50", color = 'r', fontsize = 15)
 
 
 ##################################
